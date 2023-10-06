@@ -25,13 +25,14 @@ namespace StarterAssets
 		
 		private bool m_IgnoreInput;
 		
-#if UNITY_EDITOR
+
 		private static bool m_FocusActionsSetUp;
 
 		private void Start()
 		{
 			if (!m_FocusActionsSetUp)
 			{
+#if UNITY_EDITOR
 				var ignoreInput = new InputAction(binding: "/Keyboard/escape");
 				ignoreInput.performed += context => m_IgnoreInput = true;
 				ignoreInput.Enable();
@@ -39,6 +40,11 @@ namespace StarterAssets
 				var enableInput = new InputAction(binding: "/Mouse/leftButton");
 				enableInput.performed += context => m_IgnoreInput = false;
 				enableInput.Enable();
+#endif
+				
+				var touchFocus = new InputAction(binding: "<pointer>/press");
+				touchFocus.performed += context => CameraManager.NotifyPlayerMoved();
+				touchFocus.Enable();
 				
 				m_FocusActionsSetUp = true;
 			}
@@ -48,7 +54,7 @@ namespace StarterAssets
 		{
 			m_FocusActionsSetUp = false;
 		}
-#endif
+
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 		public void OnMove(InputValue value)
